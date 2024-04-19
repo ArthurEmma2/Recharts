@@ -45,7 +45,7 @@ function Page() {
   const [endDate, setEndDate] = useState<Date | null>(defaultEndDate);
   const [endTime, setEndTime] = useState<Date | null>(defaultEndTime);
   const [unlockSchedule, setUnlockSchedule] = useState<string>("Daily");
-  const [amount, setAmount] = useState<number | undefined>(undefined); // State for the amount input
+  const [amount, setAmount] = useState<number | undefined>(undefined);
 
   // Functions to handle changes
   const handleStartDateChange = (newValue: Dayjs | null) => {
@@ -69,7 +69,7 @@ function Page() {
     const inputValue = event.target.value;
     // Validate input to accept only numbers
     if (/^\d*$/.test(inputValue)) {
-      setAmount(inputValue === "" ? null : parseInt(inputValue));
+      setAmount(inputValue === "" ? undefined : parseInt(inputValue));
     }
   };
 
