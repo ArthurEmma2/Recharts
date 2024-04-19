@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FormControl, MenuItem, Select } from "@mui/material";
+import { FormControl, MenuItem, Select, TextField } from "@mui/material"; // Import TextField for the amount input
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   LocalizationProvider,
@@ -45,6 +45,7 @@ function Page() {
   const [endDate, setEndDate] = useState<Date | null>(defaultEndDate);
   const [endTime, setEndTime] = useState<Date | null>(defaultEndTime);
   const [unlockSchedule, setUnlockSchedule] = useState<string>("Daily");
+  const [amount, setAmount] = useState<number | undefined>(undefined); // State for the amount input
 
   // Functions to handle changes
   const handleStartDateChange = (newValue: Dayjs | null) => {
@@ -63,12 +64,22 @@ function Page() {
     setEndTime(newValue ? newValue.toDate() : null);
   };
 
+  // Handle amount input change
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
+    // Validate input to accept only numbers
+    if (/^\d*$/.test(inputValue)) {
+      setAmount(inputValue === "" ? null : parseInt(inputValue));
+    }
+  };
+
   // Log values for debugging
   console.log("startDate:", startDate);
   console.log("startTime:", startTime);
   console.log("endDate:", endDate);
   console.log("endTime:", endTime);
   console.log("unlockSchedule:", unlockSchedule);
+  console.log("amount:", amount); // Log the amount value
 
   return (
     <div className="px-32 mx-auto flex flex-col items-center justify-center my-32">
@@ -161,6 +172,18 @@ function Page() {
           </FormControl>
         </div>
 
+        {/* Amount Input */}
+        <div className="pt-6">
+          <p className="font-bold text-base mb-2 text-white">Amount</p>
+          <TextField
+            type="number"
+            variant="filled"
+            value={amount ?? ""}
+            onChange={handleAmountChange}
+            sx={{ backgroundColor: "white" }}
+          />
+        </div>
+
         {/* Vesting Chart */}
         <VestingChart
           startTime={
@@ -185,6 +208,7 @@ function Page() {
                 ).getTime()
               : 0
           }
+          amount={amount} // Pass the amount to the VestingChart component
           width="80%"
           height={250}
         />
