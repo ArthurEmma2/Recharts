@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormControl, MenuItem, Select, TextField } from "@mui/material"; // Import TextField for the amount input
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
@@ -45,7 +45,7 @@ function Page() {
   const [endDate, setEndDate] = useState<Date | null>(defaultEndDate);
   const [endTime, setEndTime] = useState<Date | null>(defaultEndTime);
   const [unlockSchedule, setUnlockSchedule] = useState<string>("Daily");
-  const [amount, setAmount] = useState<number | undefined>(undefined);
+  const [amount, setAmount] = useState<number | undefined>(1);
 
   // Functions to handle changes
   const handleStartDateChange = (newValue: Dayjs | null) => {
@@ -80,6 +80,23 @@ function Page() {
   console.log("endTime:", endTime);
   console.log("unlockSchedule:", unlockSchedule);
   console.log("amount:", amount); // Log the amount value
+  useEffect(()=>{
+    console.log("unlockSchedule:", unlockSchedule);
+  },[unlockSchedule])
+
+  const handleChangeSchedule = (e:any) =>{
+    console.log("startDate?.toString()",dayjs(startDate).format("YYYY-MM-DD"));
+    console.log("startTime?.toString()",dayjs(startTime).format("HH:mm:ss"));
+    console.log("value",e.target.value);
+    const start = dayjs(dayjs(startDate).format("YYYY-MM-DD") + " " + dayjs(startTime).format("HH:mm:ss")).valueOf()
+    console.log("start",start);
+    const end = start + e.target.value
+    console.log("end",end);
+    setEndDate(dayjs(end).toDate())
+    setEndTime(dayjs(end).toDate())
+    setUnlockSchedule(e.target.value)
+    // setEndTime()
+  }
 
   return (
     <div className="px-32 mx-auto flex flex-col items-center justify-center my-32">
@@ -125,8 +142,10 @@ function Page() {
                 variant="filled"
                 className="2xl:w-[380px] md:w-[295px]"
                 sx={{ backgroundColor: "white" }}
+                
               >
                 <DatePicker
+                disabled
                   value={endDate ? dayjs(endDate) : null}
                   onChange={handleEndDateChange}
                 />
@@ -138,6 +157,7 @@ function Page() {
               sx={{ backgroundColor: "white" }}
             >
               <TimePicker
+              disabled
                 views={["hours", "minutes"]}
                 value={endTime ? dayjs(endTime) : null}
                 onChange={handleEndTimeChange}
@@ -155,7 +175,7 @@ function Page() {
           >
             <Select
               value={unlockSchedule}
-              onChange={(e) => setUnlockSchedule(e.target.value as string)}
+              onChange={handleChangeSchedule}
               displayEmpty
               inputProps={{ "aria-label": "Without label" }}
             >
@@ -163,7 +183,7 @@ function Page() {
                 <MenuItem
                   className="capitalize"
                   key={interval.value}
-                  value={interval.label}
+                  value={interval.value}
                 >
                   {interval.label}
                 </MenuItem>
