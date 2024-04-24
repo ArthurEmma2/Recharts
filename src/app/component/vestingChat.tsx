@@ -20,6 +20,7 @@ interface VestingChartProps {
   amount?: number;
   width?: string | number;
   height?: string | number;
+  unlockSchedule:number;
 }
 
 const CustomTooltip: React.FC<{
@@ -60,6 +61,7 @@ const CustomTooltip: React.FC<{
 };
 
 const VestingChart: React.FC<VestingChartProps> = ({
+  unlockSchedule,
   startTime,
   endTime,
   amount,
@@ -82,14 +84,36 @@ const VestingChart: React.FC<VestingChartProps> = ({
   ): DataItem[] => {
     const duration = endTime - startTime;
     const data: DataItem[] = [];
-    const interval = determineInterval(duration);
+    // const interval = determineInterval(duration);
+    let interval = unlockSchedule;
+    console.log("duration",duration);
+    console.log("amount",amount);
+    console.log("duration / interval",duration / interval);
+    if(duration / interval < 1){
+      data.push({ time:endTime, value:amount ?? 0 });
+      return data
+    }
 
-    for (let i = 0; i <= duration / interval; i++) {
+    if(duration / interval > 2800){
+      interval = determineInterval(duration);
+    }
+
+    console.log("interval",interval);
+    const num = Math.round(duration / interval)
+
+    for (let i = 0; i <= num ; i++) {
       const time = startTime + i * interval;
       const value = amount
-        ? (amount / duration) * (time - startTime)
+        ? (amount / duration) * (time+0.1 - startTime)
         : (100 / duration) * (time - startTime);
-      data.push({ time, value });
+        console.log("time",time);
+        console.log("endTime",endTime);
+        if(i === num){
+          data.push({ time, value:amount??0 });
+        }else{
+          data.push({ time, value });
+        }
+      console.log("i",i);
     }
 
     if (data.length > 0) {
@@ -113,7 +137,7 @@ const VestingChart: React.FC<VestingChartProps> = ({
 
   useEffect(() => {
     setData(generateData(startTime, calculatedEndTime, amount));
-  }, [startTime, calculatedEndTime, amount]);
+  }, [startTime, calculatedEndTime, amount, unlockSchedule]);
 
   useEffect(() => {
     if (data.length) {

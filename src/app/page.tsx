@@ -44,7 +44,7 @@ function Page() {
   const [startTime, setStartTime] = useState<Date | null>(defaultStartTime);
   const [endDate, setEndDate] = useState<Date | null>(defaultEndDate);
   const [endTime, setEndTime] = useState<Date | null>(defaultEndTime);
-  const [unlockSchedule, setUnlockSchedule] = useState<string>("Daily");
+  const [unlockSchedule, setUnlockSchedule] = useState<number>(1000);
   const [amount, setAmount] = useState<number | undefined>(1);
 
   // Functions to handle changes
@@ -85,15 +85,15 @@ function Page() {
   },[unlockSchedule])
 
   const handleChangeSchedule = (e:any) =>{
-    console.log("startDate?.toString()",dayjs(startDate).format("YYYY-MM-DD"));
-    console.log("startTime?.toString()",dayjs(startTime).format("HH:mm:ss"));
+    // console.log("startDate?.toString()",dayjs(startDate).format("YYYY-MM-DD"));
+    // console.log("startTime?.toString()",dayjs(startTime).format("HH:mm:ss"));
     console.log("value",e.target.value);
-    const start = dayjs(dayjs(startDate).format("YYYY-MM-DD") + " " + dayjs(startTime).format("HH:mm:ss")).valueOf()
-    console.log("start",start);
-    const end = start + e.target.value
-    console.log("end",end);
-    setEndDate(dayjs(end).toDate())
-    setEndTime(dayjs(end).toDate())
+    // const start = dayjs(dayjs(startDate).format("YYYY-MM-DD") + " " + dayjs(startTime).format("HH:mm:ss")).valueOf()
+    // console.log("start",start);
+    // const end = start + e.target.value
+    // console.log("end",end);
+    // setEndDate(dayjs(end).toDate())
+    // setEndTime(dayjs(end).toDate())
     setUnlockSchedule(e.target.value)
     // setEndTime()
   }
@@ -145,7 +145,6 @@ function Page() {
                 
               >
                 <DatePicker
-                disabled
                   value={endDate ? dayjs(endDate) : null}
                   onChange={handleEndDateChange}
                 />
@@ -157,7 +156,6 @@ function Page() {
               sx={{ backgroundColor: "white" }}
             >
               <TimePicker
-              disabled
                 views={["hours", "minutes"]}
                 value={endTime ? dayjs(endTime) : null}
                 onChange={handleEndTimeChange}
@@ -206,6 +204,7 @@ function Page() {
 
         {/* Vesting Chart */}
         <VestingChart
+        unlockSchedule={unlockSchedule}
           startTime={
             startDate && startTime
               ? new Date(
